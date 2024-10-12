@@ -18,6 +18,6 @@ ville="$1"
 #On récupère les données dans wttr.in avec curl et on les envoie dans le tempo
 curl -s "wttr.in/$VILLE?format=%C+%t+%f+%p" > "$tempo"
 
-
+#On selectionne les informations qui nous interessents
 
 
