@@ -7,6 +7,7 @@
 if [[ $# -ne 1 ]]; 
 then
  echo "Veuillez saisir une seule ville ! "
+ exit 1
 fi
 
 #On crée le fichier pour les tempérture et le temporaire
@@ -20,4 +21,16 @@ curl -s "wttr.in/$VILLE?format=%C+%t+%f+%p" > "$tempo"
 
 #On selectionne les informations qui nous interessents
 
+current_temp=$(jq '.current_condition[0].temp_C' $tempo)
+forecast_temp=$(jq '.weather[1].hourly[0].tempC' $tempo)
 
+#on fait une mise en forme des données
+
+date=$(date "+%Y-%m-%d")
+time=$(date "+%H:%M:%S")
+
+#on enregistrer les informations dans meteo.txt
+
+echo "$date - $time - $ville : Température actuelle : $current_temp°C - Prévision pour demain : $forecast_temp°C" >> $meteo
+
+echo "Les informations météorologiques ont été enregistrées dans $meteo."
