@@ -10,11 +10,16 @@ then
  exit 1
 fi
 
-#On crée le fichier pour les tempérture et le temporaire
+#On crée le fichier pour les tempértures
 tempo="meteo_tempo.txt"
 meteo="meteo.txt"
+
 #On récupère la ville
 ville="$1"
+
+# Nom du fichier d'historique pour la journée
+date=$(date "+%Y-%m--%d")
+historique="meteo_${date//-/}.txt"
 
 #On récupère les données dans wttr.in avec curl et on les envoie dans le tempo
 curl -s "wttr.in/$VILLE?format=%C+%t+%f+%p" > "$tempo"
