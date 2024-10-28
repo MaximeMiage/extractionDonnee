@@ -13,8 +13,15 @@ fi
 #On crée le fichier pour les tempérture et le temporaire
 tempo="meteo_tempo.txt"
 meteo="meteo.txt"
-#On récupère la ville
-ville="$1"
+
+#définir la ville par défaut
+ville="Toulouse"
+
+# Si un argument OK, on recupère la ville
+if [[ $# -eq 1 ]]; then
+  ville="$1"
+fi
+
 
 #On récupère les données dans wttr.in avec curl et on les envoie dans le tempo
 curl -s "wttr.in/$VILLE?format=%C+%t+%f+%p" > "$tempo"
