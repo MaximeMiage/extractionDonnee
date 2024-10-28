@@ -4,7 +4,7 @@
 
 #Vérifier qu'on entre bien un seul argument ou aucun
 
-if [[ $# -ne 1 ]]; 
+if [[ $# -gt 1 ]]; 
 then
  echo "Veuillez saisir une seule ville ! "
  exit 1
@@ -30,7 +30,7 @@ curl_status=$?
 
 # verifier si fichier recupéré.
 if [[ $curl_status -ne 0 || ! -s $tempo ]]; then
-  echo "Erreur : Impossible de récupérer les données météo." >> $errorLog
+  echo "$(date '+%Y-%m-%d %H:%M:%S') Erreur : Impossible de récupérer les données météo." >> $errorLog
   exit 1
 fi
 
