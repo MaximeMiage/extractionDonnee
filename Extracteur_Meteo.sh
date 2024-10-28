@@ -2,7 +2,7 @@
 
 #!/bin/bash
 
-#Vérifier qu'on entre bien un seul argument
+#Vérifier qu'on entre bien un seul argument ou aucun
 
 if [[ $# -ne 1 ]]; 
 then
@@ -13,6 +13,7 @@ fi
 #On crée le fichier pour les tempérture et le temporaire
 tempo="meteo_tempo.txt"
 meteo="meteo.txt"
+errorLog="meteo_error.log"
 
 #définir la ville par défaut
 ville="Toulouse"
@@ -24,7 +25,14 @@ fi
 
 
 #On récupère les données dans wttr.in avec curl et on les envoie dans le tempo
-curl -s "wttr.in/$VILLE?format=%C+%t+%f+%p" > "$tempo"
+curl -s "wttr.in/$ville?format=%C+%t+%f+%p" > "$tempo"
+curl_status=$?
+
+# verifier si fichier recupéré.
+if [[ $curl_status -ne 0 || ! -s $tempo ]]; then
+  echo "Erreur : Impossible de récupérer les données météo." >> $errorLog
+  exit 1
+fi
 
 #On selectionne les informations qui nous interessents
 
