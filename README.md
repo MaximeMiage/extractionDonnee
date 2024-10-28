@@ -8,3 +8,7 @@ Configuration d'une tache cron.
 Ouvrir le crontab et ajouter cette ligne : 0 1 * * * /extractionDonnee/Extracteur_meteo.sh
 
 Cette ligne, une fois ajouté au crontab, permettra d'exécuter le script Extracteur_meteo.sh tout les jours à 1h.
+
+Branch 2 : 
+    - Version 2
+    - variante 3
