@@ -1,4 +1,5 @@
 #Projet configuration d'un poste de travail
+#version 1
 
 #!/bin/bash
 
@@ -11,26 +12,27 @@ then
 fi
 
 #On crée le fichier pour les tempérture et le temporaire
+
 tempo="meteo_tempo.txt"
 meteo="meteo.txt"
-#On récupère la ville
+
+#On récupère les données
+
 ville="$1"
-
-#On récupère les données dans wttr.in avec curl et on les envoie dans le tempo
-curl -s "wttr.in/$VILLE?format=%C+%t+%f+%p" > "$tempo"
-
-#On selectionne les informations qui nous interessents
-
-current_temp=$(jq '.current_condition[0].temp_C' $tempo)
-forecast_temp=$(jq '.weather[1].hourly[0].tempC' $tempo)
+temp_act=$(jq '.current_condition[0].temp_C' $tempo)
+temp_futur=$(jq '.weather[1].hourly[0].tempC' $tempo)
 
 #on fait une mise en forme des données
 
 date=$(date "+%Y-%m-%d")
 time=$(date "+%H:%M:%S")
 
-#on enregistrer les informations dans meteo.txt
+#On récupère les données dans wttr.in avec curl et on les envoie dans le tempo
 
-echo "$date - $time - $ville : Température actuelle : $current_temp°C - Prévision pour demain : $forecast_temp°C" >> $meteo
+curl -s "wttr.in/$ville?format=%C+%t+%f+%p" > "$tempo"
+
+#Formater la sortie
+
+echo "$date - $time - $ville : Température actuelle : $temp_act°C - Prévision pour demain : $temp_futur" >> $meteo
 
 echo "Les informations météorologiques ont été enregistrées dans $meteo."
