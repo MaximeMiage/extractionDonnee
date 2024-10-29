@@ -23,6 +23,9 @@ meteo="meteo.txt"
 ville="$1"
 temp_act=$(jq '.current_condition[0].temp_C' $tempo)
 temp_futur=$(jq '.weather[1].hourly[0].tempC' $tempo)
+vent=$(jq '.current_condition[0].windspeedKmph' "$tempo")
+humidite=$(jq '.current_condition[0].humidity' "$tempo")
+visibilite=$(jq '.current_condition[0].visibility' "$tempo")
 
 #on fait une mise en forme des données
 
