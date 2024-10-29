@@ -37,7 +37,7 @@ time=$(date "+%H:%M:%S")
 curl -s "wttr.in/$ville?format=%C+%t+%f+%p" > "$tempo"
 
 #Formater la sortie
-
-echo "$date - $time - $ville : Température actuelle : $temp_act°C - Prévision pour demain : $temp_futur" >> $meteo
+#On ajoute le vent, l'humidité et la visibilité
+echo "$date - $time - $ville : Température actuelle : $temp_act°C - Prévision pour demain : $temp_futur°C - Vitesse du vent : $vent - Taux d'humidité : $humidite - Visibilité : $visibilite km" >> $meteo
 
 echo "Les informations météorologiques ont été enregistrées dans $meteo."
