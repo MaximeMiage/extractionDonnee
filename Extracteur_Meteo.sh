@@ -2,40 +2,68 @@
 
 #!/bin/bash
 
-#Vérifier qu'on entre bien un seul argument
+# Vérifier qu'on entre bien un seul argument
 
-if [[ $# -ne 1 ]]; 
-then
- echo "Veuillez saisir une seule ville ! "
- exit 1
+if [[ $# -lt 1 || $# -gt 2 ]]; then
+    echo "Usage: $0 <ville> [format (txt/json)]"
+    exit 1
 fi
 
-#On crée le fichier pour les tempértures
+# Créer le fichier pour les tempértures
 tempo="meteo_tempo.txt"
 meteo="meteo.txt"
 
-#On récupère la ville
+# Récupèrer la ville
 ville="$1"
+format="${2:-txt}"  # Si aucun format n'est spécifié, on utilise le format texte par défaut
 
 # Nom du fichier d'historique pour la journée
 date=$(date "+%Y-%m--%d")
 historique="meteo_${date//-/}.txt"
 
-#On récupère les données dans wttr.in avec curl et on les envoie dans le tempo
-curl -s "wttr.in/$VILLE?format=%C+%t+%f+%p" > "$tempo"
+# Récupèrer les données dans wttr.in avec curl et on les envoie dans le tempo
+curl -s "wttr.in/$ville?format=j1" > "$tempo"
 
-#On selectionne les informations qui nous interessents
+# Extraire les informations météo du fichier tempo
+current_temp=$(jq -r '.current_condition[0].temp_C' "$tempo")
+forecast_temp=$(jq -r '.weather[1].hourly[0].tempC' "$tempo")
+vent=$(jq -r '.current_condition[0].windspeedKmph' "$tempo")
+humidite=$(jq -r '.current_condition[0].humidity' "$tempo")
+visibilite=$(jq -r '.current_condition[0].visibility' "$tempo")
+prevision=$(jq -r '.weather[1].hourly[0].weatherDesc[0].value' "$tempo")
 
-current_temp=$(jq '.current_condition[0].temp_C' $tempo)
-forecast_temp=$(jq '.weather[1].hourly[0].tempC' $tempo)
 
-#on fait une mise en forme des données
+# Mise en forme des données
 
 date=$(date "+%Y-%m-%d")
 time=$(date "+%H:%M:%S")
 
-#on enregistrer les informations dans meteo.txt
+# Enregistrer les informations en fonction du format choisi
 
-echo "$date - $time - $ville : Température actuelle : $current_temp°C - Prévision pour demain : $forecast_temp°C" >> $meteo
+# Enregistrer les informations en fonction du format choisi
+if [[ "$format" == "json" ]]; then
+    # Format JSON
+    json_output=$(cat <<EOF
+{
+    "date": "$date",
+    "heure": "$time",
+    "ville": "$ville",
+    "temperature": "$current_temp°C",
+    "prevision": "$prevision",
+    "vent": "$vent km/h",
+    "humidite": "$humidite%",
+    "visibilite": "$visibilite km"
+}
+EOF
+)
+    echo "$json_output" > "$historique"
+    echo "Les informations météorologiques ont été enregistrées dans $historique en format JSON."
+else
+    # Format texte
+    echo "$date - $time - $ville : Température actuelle : $current_temp°C - Prévision pour demain : $forecast_temp°C - Vent : $vent km/h - Humidité : $humidite% - Visibilité : $visibilite km" >> "$meteo"
+    echo "Les informations météorologiques ont été enregistrées dans $meteo en format texte."
+fi
 
-echo "Les informations météorologiques ont été enregistrées dans $meteo."
+
+# Nettoyage du fichier temporaire
+rm "$tempo"
